@@ -39,7 +39,6 @@ goog.require('wgxpath.Expr');
 goog.require('wgxpath.Node');
 goog.require('wgxpath.NodeSet');
 goog.require('wgxpath.userAgent');
-goog.require('wgxpath.DataType');
 
 
 
@@ -379,7 +378,14 @@ wgxpath.FunctionCall.Func = {
       function(ctx, opt_expr) {
         // TODO: Fully implement this.
         var node = opt_expr ? opt_expr.evaluate(ctx).getFirst() : ctx.getNode();
-        return node ? node.nodeName : '';
+        if(node) {
+          if (goog.isDef(node.localName)) {
+            return (node.prefix ? (node.prefix + ':') : '') + node.localName;
+          } else {
+            return node.nodeName.toLowerCase(); // captial case node name, lower it
+          }
+        }
+        return '';
       }, 0, 1, true),
   NAMESPACE_URI: wgxpath.FunctionCall.createFunc_('namespace-uri',
       wgxpath.DataType.STRING, true, false, false,

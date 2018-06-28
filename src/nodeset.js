@@ -32,6 +32,7 @@
 goog.provide('wgxpath.NodeSet');
 
 goog.require('goog.dom');
+goog.require('goog.dom.NodeType');
 goog.require('wgxpath.Node');
 
 
@@ -127,15 +128,22 @@ wgxpath.NodeSet.merge = function(a, b) {
       aCurr = aCurr.next;
       bCurr = bCurr.next;
     } else {
-      var compareResult = goog.dom.compareNodeOrder(
-          /** @type {!Node} */ (aCurr.node),
-          /** @type {!Node} */ (bCurr.node));
-      if (compareResult > 0) {
+      // If this is a weird node (like Attr that does not inherit from Node in DOM4),
+      // then just assume any order
+      if (!aCurr.node.nodeType) {
         next = bCurr;
         bCurr = bCurr.next;
       } else {
-        next = aCurr;
-        aCurr = aCurr.next;
+        var compareResult = goog.dom.compareNodeOrder(
+            /** @type {!Node} */ (aCurr.node),
+            /** @type {!Node} */ (bCurr.node));
+        if (compareResult > 0) {
+          next = bCurr;
+          bCurr = bCurr.next;
+        } else {
+          next = aCurr;
+          aCurr = aCurr.next;
+        }
       }
     }
     next.prev = tail;

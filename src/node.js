@@ -265,8 +265,14 @@ wgxpath.Node.getDescendantNodesGeneric_ = function(test, node,
   } else if (test instanceof wgxpath.KindTest) {
     wgxpath.Node.doRecursiveAttrMatch_(test, node, attrName,
         attrValue, nodeset);
-  } else if (node.getElementsByTagName) {
-    var nodes = node.getElementsByTagName(test.getName());
+  } else if (node.getElementsByTagNameNS) {
+    var namespace = test.getNamespaceUri();
+    var nodes;
+    if (namespace && namespace != wgxpath.NameTest.WILDCARD) {
+      nodes = node.getElementsByTagNameNS(namespace, test.getName());
+    } else {
+      nodes = node.getElementsByTagName(test.getName());
+	}
     goog.array.forEach(nodes, function(node) {
       if (test.matches(node) && wgxpath.Node.attrMatches(node, attrName, attrValue)) {
         nodeset.add(node);

@@ -73,6 +73,10 @@ wgxpath.BinaryExpr = function(op, left, right) {
   this.setNeedContextNode(left.doesNeedContextNode() ||
       right.doesNeedContextNode());
 
+  /*
+   * Disabled by Adomas on 2018-07-18.
+   * This optimization breaks namespaced attribute checks
+
   // Optimize [@id="foo"] and [@name="bar"]
   if (this.op_ == wgxpath.BinaryExpr.Op.EQUAL) {
     if (!right.doesNeedContextNode() && !right.doesNeedContextPosition() &&
@@ -89,6 +93,7 @@ wgxpath.BinaryExpr = function(op, left, right) {
         valueExpr: left});
     }
   }
+  */
 };
 goog.inherits(wgxpath.BinaryExpr, wgxpath.Expr);
 

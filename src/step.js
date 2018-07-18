@@ -385,7 +385,15 @@ wgxpath.Step.Axis = {
               }
             }
           } else {
-            var attr = attrs.getNamedItem(testName);
+            var namespace = test.getNamespaceUri();
+            var attr;
+            if (namespace && namespace != wgxpath.NameTest.WILDCARD) {
+              // Google typescript compiler does not have this function typedefed
+              // and minifies it if we use the dot notation.
+              attr = attrs['getNamedItemNS'](namespace, testName);
+            } else {
+              attr = attrs.getNamedItem(testName);
+            }
             if (attr) {
               if (wgxpath.userAgent.IE_DOC_PRE_9) {
                 if (attr.nodeValue) {

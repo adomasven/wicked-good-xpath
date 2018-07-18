@@ -60,14 +60,13 @@ wgxpath.NameTest = function(name, opt_namespaceUri) {
     defaultNamespace = wgxpath.NameTest.WILDCARD;
   } else {
     // Defined names default to html namespace.
-    defaultNamespace = wgxpath.NameTest.HTML_NAMESPACE_URI_;
+    defaultNamespace = null;
   }
   /**
    * @type {string}
    * @private
    */
-  this.namespaceUri_ = opt_namespaceUri ? opt_namespaceUri.toLowerCase() :
-      defaultNamespace;
+  this.namespaceUri_ = opt_namespaceUri || defaultNamespace;
 
 };
 
@@ -109,9 +108,9 @@ wgxpath.NameTest.prototype.matches = function(node) {
     if (this.namespaceUri_ == wgxpath.NameTest.WILDCARD) {
       return true;
     } else {
-      var namespaceUri = node.namespaceURI ? node.namespaceURI.toLowerCase() :
-          wgxpath.NameTest.HTML_NAMESPACE_URI_;
-      return this.namespaceUri_ == namespaceUri;
+      // If no namespace specified in the test, only match the document namespace
+      var testNamespace = this.namespaceUri_ || node.ownerDocument.lookupNamespaceURI(null);
+      return testNamespace == node.namespaceURI;
     }
   }
 };

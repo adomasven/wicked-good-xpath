@@ -128,15 +128,20 @@ wgxpath.NodeSet.merge = function(a, b) {
       aCurr = aCurr.next;
       bCurr = bCurr.next;
     } else {
+      var aNode = aCurr.node;
+      var bNode = bCurr.node;
+
       // If this is a weird node (like Attr that does not inherit from Node in DOM4),
-      // then just assume any order
+      // then try to compare the order of their owner nodes
       if (!aCurr.node.nodeType) {
-        next = bCurr;
-        bCurr = bCurr.next;
-      } else {
+        aNode = aCurr.node.ownerElement;
+        bNode = bCurr.node.ownerElement;
+      }
+
+      if (aNode && bNode) {
         var compareResult = goog.dom.compareNodeOrder(
-            /** @type {!Node} */ (aCurr.node),
-            /** @type {!Node} */ (bCurr.node));
+          /** @type {!Node} */ (aNode),
+          /** @type {!Node} */ (bNode));
         if (compareResult > 0) {
           next = bCurr;
           bCurr = bCurr.next;
@@ -144,6 +149,10 @@ wgxpath.NodeSet.merge = function(a, b) {
           next = aCurr;
           aCurr = aCurr.next;
         }
+      } else {
+        // Otherwise just assume any order
+        next = bCurr;
+        bCurr = bCurr.next;
       }
     }
     next.prev = tail;
